@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Virtual Lab — Maxima & Minima of f(x,y) | PCCOE</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500&family=DM+Mono&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.4.2/math.min.js"></script>
+<style>
+:root {
+  --ink:#1a1714;--ink-muted:#6b6460;--ink-faint:#b0aba6;
+  --paper:#faf8f4;--paper-warm:#f4f0e8;--paper-card:#fff;
+  --accent:#c2410c;--accent-soft:#fed7aa;--accent-light:#fff7ed;
+  --teal:#0f766e;--teal-soft:#ccfbf1;--blue:#1d4ed8;--blue-soft:#dbeafe;
+  --border:#e5e0d8;--border-strong:#c9c2b8;
+  --nav-h:64px;--r:10px;
+  --shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.05);
+  --shadow-lg:0 4px 24px rgba(0,0,0,.09);
+}
+[data-theme="dark"]{
+  --ink:#e8e4df;--ink-muted:#9b948e;--ink-faint:#5a5450;
+  --paper:#12100e;--paper-warm:#1c1916;--paper-card:#1f1c19;
+  --accent:#f97316;--accent-soft:#7c2d12;--accent-light:#1c1007;
+  --teal:#14b8a6;--teal-soft:#042f2e;--blue:#60a5fa;--blue-soft:#1e3a5f;
+  --border:#2a2520;--border-strong:#3a342e;
+  --shadow:0 1px 3px rgba(0,0,0,.3),0 4px 12px rgba(0,0,0,.2);
+  --shadow-lg:0 4px 24px rgba(0,0,0,.4);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--nav-h)+16px)}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);line-height:1.7;font-size:16px;transition:background .3s,color .3s}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:200;height:var(--nav-h);background:rgba(250,248,244,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;gap:.75rem;transition:background .3s}
+[data-theme="dark"] nav{background:rgba(18,16,14,.92)}
+.nav-brand{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--ink);text-decoration:none;white-space:nowrap}
+.nav-brand span{color:var(--accent)}
+.nav-links{display:flex;gap:.15rem;flex-wrap:nowrap}
+.nav-links a{font-size:.8rem;font-weight:500;color:var(--ink-muted);text-decoration:none;padding:.35rem .65rem;border-radius:6px;transition:all .15s;white-space:nowrap}
+.nav-links a:hover{background:var(--paper-warm);color:var(--ink)}
+.nav-links a.active{background:var(--accent);color:#fff}
+.nav-right{display:flex;align-items:center;gap:.5rem;flex-shrink:0}
+.icon-btn{background:none;border:1px solid var(--border);border-radius:7px;padding:.35rem .6rem;cursor:pointer;color:var(--ink-muted);font-size:.85rem;transition:all .15s;display:flex;align-items:center;gap:.3rem}
+.icon-btn:hover{background:var(--paper-warm);color:var(--ink)}
+.hamburger{display:none;flex-direction:column;gap:4px;background:none;border:none;cursor:pointer;padding:.4rem}
+.hamburger span{display:block;width:20px;height:2px;background:var(--ink-muted);border-radius:2px;transition:.3s}
+.mobile-menu{display:none;position:fixed;top:var(--nav-h);left:0;right:0;background:var(--paper-card);border-bottom:1px solid var(--border);padding:1rem;z-index:199;flex-direction:column;gap:.3rem;box-shadow:var(--shadow-lg)}
+.mobile-menu.open{display:flex}
+.mobile-menu a{font-size:.9rem;padding:.5rem .75rem;border-radius:7px;color:var(--ink-muted);text-decoration:none;font-weight:500}
+.mobile-menu a:hover{background:var(--paper-warm);color:var(--ink)}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#1a1714 0%,#3d2b1f 60%,#5c3d2e 100%);color:#fff;padding:5rem 2rem 4rem;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle at 30% 40%,rgba(194,65,12,.18) 0%,transparent 50%),radial-gradient(circle at 75% 65%,rgba(15,118,110,.14) 0%,transparent 45%)}
+.hero-tag{display:inline-block;background:rgba(194,65,12,.25);border:1px solid rgba(194,65,12,.5);color:#fed7aa;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;font-weight:500;padding:.3rem .8rem;border-radius:100px;margin-bottom:1.5rem}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,5vw,3.2rem);font-weight:700;line-height:1.15;letter-spacing:-.02em;margin-bottom:1rem}
+.hero h1 em{color:#fdba74;font-style:normal}
+.hero p{font-size:1rem;color:rgba(255,255,255,.7);max-width:540px;margin:0 auto 2rem}
+.hero-pills{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-bottom:2rem}
+.hero-pill{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.85);font-size:.78rem;font-weight:500;padding:.3rem .9rem;border-radius:100px}
+.hero-cta{display:inline-flex;align-items:center;gap:.5rem;background:var(--accent);color:#fff;font-size:.9rem;font-weight:500;padding:.75rem 1.75rem;border-radius:8px;text-decoration:none;transition:background .15s;cursor:pointer;border:none}
+.hero-cta:hover{background:#b03a0a}
+.hero-stats{display:flex;justify-content:center;gap:2rem;margin-top:2.5rem;flex-wrap:wrap}
+.hero-stat{text-align:center}
+.hero-stat-n{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:#fdba74}
+.hero-stat-l{font-size:.75rem;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.06em}
+
+/* SECTION */
+.section{padding:4rem 2rem;max-width:980px;margin:0 auto}
+.section-title{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:700;color:var(--ink);margin-bottom:.4rem;letter-spacing:-.02em}
+.section-title span{color:var(--accent)}
+.section-sub{color:var(--ink-muted);margin-bottom:2.5rem;font-size:.95rem}
+.divider{height:1px;background:var(--border);max-width:980px;margin:0 auto}
+
+/* CARD */
+.card{background:var(--paper-card);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);padding:1.75rem;margin-bottom:1.25rem}
+.card h3{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:600;margin-bottom:.75rem;color:var(--ink)}
+.card p,.card li{font-size:.95rem;color:var(--ink);line-height:1.75}
+.card ul{padding-left:1.25rem}
+.card ul li{margin-bottom:.35rem}
+
+/* AIM GRID */
+.aim-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.25rem}
+.aim-card{background:var(--paper-card);border:1px solid var(--border);border-radius:var(--r);padding:1.5rem;position:relative;overflow:hidden;box-shadow:var(--shadow)}
+.aim-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.aim-card.orange::before{background:var(--accent)}
+.aim-card.teal::before{background:var(--teal)}
+.aim-card.blue::before{background:var(--blue)}
+.aim-icon{font-size:1.6rem;margin-bottom:.75rem}
+.aim-card h3{font-size:1rem;font-weight:600;color:var(--ink);margin-bottom:.5rem}
+.aim-card p,.aim-card li{font-size:.88rem;color:var(--ink-muted);line-height:1.65}
+.aim-card ul{padding-left:1.1rem}
+.aim-card ul li{margin-bottom:.3rem}
+
+/* THEORY */
+.theory-block{margin-bottom:1.75rem}
+.theory-block h4{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--ink);border-left:3px solid var(--accent);padding-left:.75rem;margin-bottom:.65rem}
+.formula-box{background:var(--paper-warm);border:1px solid var(--border);border-radius:8px;padding:1rem 1.25rem;font-family:'DM Mono',monospace;font-size:.88rem;color:var(--ink);margin:.75rem 0;line-height:2;overflow-x:auto}
+.example-box{background:var(--accent-light);border:1px solid var(--accent-soft);border-radius:8px;padding:1.25rem 1.5rem;margin:1rem 0}
+.example-box h5{font-weight:600;color:var(--accent);margin-bottom:.5rem;font-size:.9rem}
+.example-box p,.example-box li{font-size:.9rem;color:var(--ink);line-height:1.8}
+.example-box ul{padding-left:1.2rem}
+.table-box{margin:1rem 0;overflow-x:auto;border-radius:8px;border:1px solid var(--border)}
+.table-box table{width:100%;border-collapse:collapse;font-size:.88rem}
+.table-box th{background:var(--ink);color:#fff;padding:.6rem 1rem;text-align:left;font-weight:500}
+[data-theme="dark"] .table-box th{background:var(--border-strong)}
+.table-box td{padding:.55rem 1rem;border-bottom:1px solid var(--border);color:var(--ink)}
+.table-box tr:last-child td{border-bottom:none}
+.table-box tr:nth-child(even) td{background:var(--paper-warm)}
+
+/* GLOSSARY TOOLTIP */
+.glossary{position:relative;cursor:help;border-bottom:1px dashed var(--accent);color:var(--accent)}
+.glossary-tip{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;font-size:.78rem;padding:.5rem .8rem;border-radius:7px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s;z-index:50;font-family:'DM Sans',sans-serif;font-weight:400;max-width:240px;white-space:normal;text-align:center}
+.glossary:hover .glossary-tip{opacity:1}
+
+/* CALCULATOR */
+.calc-wrap{background:var(--paper-card);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow-lg);overflow:hidden}
+.calc-header{background:var(--ink);color:#fff;padding:1.1rem 1.5rem;display:flex;align-items:center;gap:.75rem}
+[data-theme="dark"] .calc-header{background:#0d0b09}
+.calc-header h3{font-family:'Playfair Display',serif;font-size:1.05rem}
+.calc-header span{font-size:.78rem;color:rgba(255,255,255,.45);margin-left:auto}
+.calc-body{padding:1.5rem}
+.input-hint{font-size:.82rem;color:var(--ink-muted);margin-bottom:1rem;line-height:1.6}
+.input-hint code{background:var(--paper-warm);border:1px solid var(--border);border-radius:4px;padding:.1rem .35rem;font-family:'DM Mono',monospace;font-size:.8rem}
+.preset-label{font-size:.75rem;font-weight:600;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem}
+.preset-row{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.25rem}
+.preset-btn{background:var(--paper-warm);color:var(--ink);border:1px solid var(--border-strong);border-radius:6px;padding:.3rem .75rem;font-family:'DM Mono',monospace;font-size:.8rem;cursor:pointer;transition:all .15s}
+.preset-btn:hover{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.input-row{display:flex;gap:.75rem;margin-bottom:1rem;flex-wrap:wrap;align-items:flex-end}
+.input-group{flex:1;min-width:200px}
+.input-group label{display:block;font-size:.78rem;font-weight:600;color:var(--ink-muted);margin-bottom:.4rem;letter-spacing:.03em;text-transform:uppercase}
+.input-group input{width:100%;padding:.65rem 1rem;border:1.5px solid var(--border-strong);border-radius:8px;font-family:'DM Mono',monospace;font-size:.95rem;color:var(--ink);background:var(--paper);transition:border .15s;outline:none}
+.input-group input:focus{border-color:var(--accent)}
+.btn-row{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
+.btn-primary{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:.7rem 1.5rem;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:500;cursor:pointer;transition:background .15s;white-space:nowrap}
+.btn-primary:hover{background:#b03a0a}
+.btn-primary:disabled{background:var(--ink-faint);cursor:not-allowed}
+.btn-secondary{background:var(--paper-warm);color:var(--ink);border:1px solid var(--border-strong);border-radius:8px;padding:.68rem 1.2rem;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:500;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn-secondary:hover{background:var(--border)}
+.range-row{display:flex;gap:.75rem;flex-wrap:wrap;align-items:flex-end;margin-bottom:1rem}
+.range-group{display:flex;flex-direction:column;gap:.3rem}
+.range-group label{font-size:.72rem;font-weight:600;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.04em}
+.range-group input{width:80px;padding:.5rem .65rem;border:1.5px solid var(--border-strong);border-radius:7px;font-family:'DM Mono',monospace;font-size:.85rem;color:var(--ink);background:var(--paper);outline:none}
+.range-group input:focus{border-color:var(--accent)}
+
+/* HISTORY */
+.history-section{margin-top:1.25rem}
+.history-label{font-size:.75rem;font-weight:600;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem}
+.history-list{display:flex;gap:.4rem;flex-wrap:wrap}
+.history-chip{background:var(--paper-warm);border:1px solid var(--border);border-radius:20px;padding:.25rem .75rem;font-family:'DM Mono',monospace;font-size:.78rem;color:var(--ink-muted);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:.4rem}
+.history-chip:hover{border-color:var(--accent);color:var(--accent)}
+.history-chip .del{color:var(--ink-faint);font-size:.7rem;margin-left:.2rem}
+.history-chip .del:hover{color:#ef4444}
+
+/* STEPS */
+.steps-container{margin-top:1.5rem}
+.step{border:1px solid var(--border);border-radius:9px;margin-bottom:.75rem;overflow:hidden;opacity:0;transform:translateY(8px);animation:stepIn .35s forwards}
+@keyframes stepIn{to{opacity:1;transform:none}}
+.step-header{display:flex;align-items:center;gap:.75rem;background:var(--paper-warm);padding:.7rem 1.1rem;border-bottom:1px solid var(--border);cursor:pointer;user-select:none}
+.step-header:hover{background:var(--border)}
+.step-num{width:24px;height:24px;background:var(--accent);color:#fff;border-radius:50%;font-size:.72rem;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-title{font-weight:500;font-size:.88rem;flex:1}
+.step-toggle{font-size:.75rem;color:var(--ink-faint);transition:transform .2s}
+.step.collapsed .step-body{display:none}
+.step.collapsed .step-toggle{transform:rotate(-90deg)}
+.step-body{padding:1rem 1.25rem;font-family:'DM Mono',monospace;font-size:.87rem;line-height:2}
+.step-body .line{display:flex;gap:.5rem;align-items:baseline;flex-wrap:wrap;margin-bottom:.1rem}
+.step-body .lbl{color:var(--ink-muted);font-family:'DM Sans',sans-serif;font-size:.78rem;min-width:85px}
+.step-body .val{color:var(--ink)}
+.cp-table{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:.5rem}
+.cp-table th{background:var(--paper-warm);padding:.4rem .75rem;text-align:left;font-weight:600;color:var(--ink-muted);font-family:'DM Sans',sans-serif;border-bottom:1px solid var(--border)}
+.cp-table td{padding:.4rem .75rem;border-bottom:1px solid var(--border);color:var(--ink)}
+.cp-table tr:last-child td{border-bottom:none}
+.badge{display:inline-block;font-size:.72rem;font-weight:600;padding:.15rem .55rem;border-radius:20px;font-family:'DM Sans',sans-serif}
+.badge-max{background:var(--teal-soft);color:var(--teal)}
+.badge-min{background:var(--blue-soft);color:var(--blue)}
+.badge-sad{background:var(--accent-light);color:var(--accent)}
+.badge-inc{background:var(--paper-warm);color:var(--ink-muted)}
+
+.conclusion-box{padding:1.1rem 1.4rem;border-radius:8px;margin-top:.75rem;border:2px solid;display:flex;align-items:center;gap:1rem}
+.conclusion-box.maximum{background:var(--teal-soft);border-color:var(--teal);color:var(--teal)}
+.conclusion-box.minimum{background:var(--blue-soft);border-color:var(--blue);color:var(--blue)}
+.conclusion-box.saddle{background:var(--accent-light);border-color:var(--accent);color:var(--accent)}
+.conclusion-box.inconclusive{background:var(--paper-warm);border-color:var(--border-strong);color:var(--ink-muted)}
+.conclusion-icon{font-size:1.8rem}
+.conclusion-text strong{display:block;font-size:.95rem;font-weight:600;margin-bottom:.2rem}
+.conclusion-text span{font-size:.85rem}
+.error-box{background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:1rem 1.25rem;color:#b91c1c;font-size:.88rem;margin-top:1rem}
+[data-theme="dark"] .error-box{background:#2d0f0f;border-color:#7f1d1d;color:#fca5a5}
+
+.copy-btn{background:none;border:1px solid var(--border);border-radius:6px;padding:.3rem .7rem;font-size:.75rem;color:var(--ink-muted);cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif}
+.copy-btn:hover{background:var(--paper-warm);color:var(--ink)}
+.copy-btn.copied{border-color:var(--teal);color:var(--teal);background:var(--teal-soft)}
+
+/* LOADING SPINNER */
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top:2px solid #fff;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* GRAPH */
+.graph-wrap{background:var(--paper-card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+.graph-header{background:var(--ink);color:#fff;padding:.9rem 1.4rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+[data-theme="dark"] .graph-header{background:#0d0b09}
+.graph-header-title{font-family:'Playfair Display',serif;font-size:.95rem}
+.graph-controls{display:flex;gap:.4rem}
+.graph-ctrl-btn{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:6px;padding:.3rem .65rem;font-size:.75rem;cursor:pointer;transition:all .15s}
+.graph-ctrl-btn:hover{background:rgba(255,255,255,.25)}
+.graph-ctrl-btn.active{background:var(--accent);border-color:var(--accent)}
+.graph-note{padding:.75rem 1.4rem;font-size:.83rem;color:var(--ink-muted);background:var(--paper-warm);border-bottom:1px solid var(--border)}
+#surface-canvas{width:100%;height:460px;display:block;cursor:grab;touch-action:none}
+.graph-input-row{display:flex;gap:.6rem;padding:1.1rem 1.4rem;align-items:flex-end;flex-wrap:wrap;background:var(--paper-warm);border-top:1px solid var(--border)}
+.graph-input-row input{flex:1;min-width:160px;padding:.58rem .85rem;border:1.5px solid var(--border-strong);border-radius:7px;font-family:'DM Mono',monospace;font-size:.88rem;background:var(--paper);color:var(--ink);outline:none;transition:border .15s}
+.graph-input-row input:focus{border-color:var(--teal)}
+.btn-graph{background:var(--teal);color:#fff;border:none;border-radius:7px;padding:.6rem 1.2rem;font-size:.87rem;font-weight:500;cursor:pointer;transition:background .15s;white-space:nowrap}
+.btn-graph:hover{background:#0d6460}
+.graph-range-row{display:flex;gap:.5rem;padding:.6rem 1.4rem;background:var(--paper-warm);border-top:1px solid var(--border);align-items:center;flex-wrap:wrap;font-size:.8rem;color:var(--ink-muted)}
+.graph-range-row input{width:60px;padding:.3rem .5rem;border:1px solid var(--border-strong);border-radius:5px;font-family:'DM Mono',monospace;font-size:.8rem;background:var(--paper);color:var(--ink);text-align:center;outline:none}
+
+/* COMPARE */
+.compare-wrap{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:640px){.compare-wrap{grid-template-columns:1fr}}
+.compare-panel{background:var(--paper-card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.compare-panel-header{background:var(--paper-warm);padding:.75rem 1rem;border-bottom:1px solid var(--border);font-weight:600;font-size:.88rem;display:flex;align-items:center;gap:.5rem}
+
+/* QUIZ */
+.quiz-wrap{background:var(--paper-card);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+.quiz-progress{height:4px;background:var(--border)}
+.quiz-progress-bar{height:4px;background:var(--accent);transition:width .4s}
+.quiz-body{padding:1.75rem}
+.quiz-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem}
+.quiz-q-num{font-size:.75rem;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.08em}
+.quiz-timer{font-family:'DM Mono',monospace;font-size:.85rem;color:var(--ink-muted);background:var(--paper-warm);border:1px solid var(--border);border-radius:20px;padding:.2rem .65rem}
+.quiz-timer.urgent{color:#ef4444;border-color:#ef4444;background:#fef2f2}
+.quiz-diff-row{display:flex;gap:.4rem;margin-bottom:1.5rem;flex-wrap:wrap}
+.diff-btn{font-size:.75rem;padding:.25rem .7rem;border-radius:20px;cursor:pointer;border:1px solid var(--border);background:var(--paper-warm);color:var(--ink-muted);transition:all .15s;font-family:'DM Sans',sans-serif;font-weight:500}
+.diff-btn.active-easy{background:#d1fae5;border-color:#10b981;color:#065f46}
+.diff-btn.active-med{background:var(--blue-soft);border-color:var(--blue);color:var(--blue)}
+.diff-btn.active-hard{background:var(--accent-light);border-color:var(--accent);color:var(--accent)}
+.quiz-question{font-size:1rem;font-weight:500;color:var(--ink);margin-bottom:1.25rem;line-height:1.6}
+.quiz-options{display:flex;flex-direction:column;gap:.55rem}
+.quiz-opt{padding:.7rem 1rem;border:1.5px solid var(--border-strong);border-radius:8px;cursor:pointer;font-size:.9rem;transition:all .15s;background:var(--paper);color:var(--ink)}
+.quiz-opt:hover:not(.locked){border-color:var(--accent);background:var(--accent-light)}
+.quiz-opt.correct{border-color:var(--teal);background:var(--teal-soft);color:var(--teal)}
+.quiz-opt.wrong{border-color:#ef4444;background:#fef2f2;color:#b91c1c}
+[data-theme="dark"] .quiz-opt.wrong{background:#2d0f0f;color:#fca5a5}
+.quiz-feedback{margin-top:.9rem;font-size:.85rem;color:var(--ink-muted);min-height:1.4rem;line-height:1.6}
+.quiz-nav{display:flex;justify-content:space-between;align-items:center;margin-top:1.4rem;padding-top:1.1rem;border-top:1px solid var(--border)}
+.btn-quiz{background:var(--ink);color:#fff;border:none;border-radius:7px;padding:.58rem 1.3rem;font-size:.85rem;font-weight:500;cursor:pointer;transition:background .15s}
+.btn-quiz:hover{background:#3d2b1f}
+.btn-quiz:disabled{background:var(--ink-faint);cursor:not-allowed}
+.quiz-score-wrap{text-align:center;padding:2.5rem 1rem}
+.quiz-score-big{font-family:'Playfair Display',serif;font-size:3.5rem;font-weight:700;color:var(--accent)}
+.quiz-score-label{font-size:1rem;color:var(--ink-muted);margin-bottom:1rem}
+.quiz-score-msg{font-size:.92rem;color:var(--ink);margin-bottom:1.5rem;max-width:380px;margin-left:auto;margin-right:auto}
+.quiz-review{text-align:left;max-width:560px;margin:0 auto 1.5rem}
+.review-item{padding:.75rem;border-radius:8px;margin-bottom:.5rem;font-size:.85rem;line-height:1.6}
+.review-item.r-correct{background:var(--teal-soft);border:1px solid var(--teal)}
+.review-item.r-wrong{background:var(--accent-light);border:1px solid var(--accent-soft)}
+.review-item .r-q{font-weight:600;margin-bottom:.3rem;color:var(--ink)}
+.review-item .r-a{color:var(--ink-muted)}
+.btn-restart{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:.65rem 1.6rem;font-size:.9rem;font-weight:500;cursor:pointer;transition:background .15s;margin:.3rem}
+.btn-restart:hover{background:#b03a0a}
+
+/* CONTRIB */
+.contrib-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.25rem}
+.contrib-card{background:var(--paper-card);border:1px solid var(--border);border-radius:var(--r);padding:1.5rem;text-align:center;box-shadow:var(--shadow)}
+.contrib-avatar{width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin:0 auto .9rem;border:2px solid var(--border)}
+.contrib-card h4{font-weight:600;font-size:.92rem;margin-bottom:.25rem;color:var(--ink)}
+.contrib-card p{font-size:.82rem;color:var(--ink-muted)}
+.tools-row{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.75rem}
+.tool-badge{display:flex;align-items:center;gap:.5rem;background:var(--paper-warm);border:1px solid var(--border);border-radius:8px;padding:.55rem .9rem;font-size:.83rem;font-weight:500;color:var(--ink)}
+.tool-badge .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* FOOTER */
+footer{background:var(--ink);color:rgba(255,255,255,.45);text-align:center;padding:2rem;font-size:.8rem;letter-spacing:.02em;margin-top:3rem}
+[data-theme="dark"] footer{background:#0a0906}
+footer strong{color:rgba(255,255,255,.8)}
+
+/* PDF EXPORT OVERLAY */
+.export-toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--ink);color:#fff;padding:.7rem 1.2rem;border-radius:8px;font-size:.85rem;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none}
+.export-toast.show{opacity:1}
+
+@media(max-width:780px){
+  nav{padding:0 1rem}
+  .nav-links{display:none}
+  .hamburger{display:flex}
+  .section{padding:2.5rem 1rem}
+  .hero{padding:3.5rem 1rem 3rem}
+  .hero-stats{gap:1.5rem}
+  .compare-wrap{grid-template-columns:1fr}
+  #surface-canvas{height:340px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="top-nav">
+  <a href="#hero" class="nav-brand">Virtual<span>Lab</span> ∂²</a>
+  <div class="nav-links">
+    <a href="#aim"         class="nav-link">Aim</a>
+    <a href="#theory"      class="nav-link">Theory</a>
+    <a href="#calculator"  class="nav-link">Calculator</a>
+    <a href="#graph"       class="nav-link">Graph</a>
+    <a href="#compare"     class="nav-link">Compare</a>
+    <a href="#quiz"        class="nav-link">Quiz</a>
+    <a href="#contributors"class="nav-link">Credits</a>
+  </div>
+  <div class="nav-right">
+    <button class="icon-btn" onclick="toggleTheme()" title="Toggle dark mode" id="theme-btn">🌙 Dark</button>
+    <button class="hamburger" onclick="toggleMobileMenu()" id="hamburger">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobile-menu">
+  <a href="#aim"          onclick="closeMobileMenu()">🎯 Aim</a>
+  <a href="#theory"       onclick="closeMobileMenu()">📚 Theory</a>
+  <a href="#calculator"   onclick="closeMobileMenu()">🧮 Calculator</a>
+  <a href="#graph"        onclick="closeMobileMenu()">📊 Graph</a>
+  <a href="#compare"      onclick="closeMobileMenu()">⚖️ Compare</a>
+  <a href="#quiz"         onclick="closeMobileMenu()">✏️ Quiz</a>
+  <a href="#contributors" onclick="closeMobileMenu()">🏛️ Credits</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="hero">
+  <div style="position:relative;z-index:1">
+    <div class="hero-tag">Multivariable Calculus · PCCOE Virtual Lab</div>
+    <h1>Maxima &amp; Minima of<br><em>Functions of Two Variables</em></h1>
+    <p>Compute, classify, and visualize critical points of f(x,y) step-by-step with 3D surface rendering.</p>
+    <div class="hero-pills">
+      <div class="hero-pill">∂f/∂x &amp; ∂f/∂y</div>
+      <div class="hero-pill">Critical Points</div>
+      <div class="hero-pill">2nd Derivative Test</div>
+      <div class="hero-pill">3D Surface Plot</div>
+      <div class="hero-pill">MCQ Quiz</div>
+    </div>
+    <a href="#calculator" class="hero-cta">Launch Calculator →</a>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-n">5</div><div class="hero-stat-l">Step Analysis</div></div>
+      <div class="hero-stat"><div class="hero-stat-n">3D</div><div class="hero-stat-l">Surface Graph</div></div>
+      <div class="hero-stat"><div class="hero-stat-n">10</div><div class="hero-stat-l">Quiz Questions</div></div>
+      <div class="hero-stat"><div class="hero-stat-n">∞</div><div class="hero-stat-l">Functions</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- AIM -->
+<section class="section" id="aim">
+  <h2 class="section-title">Aim, Vision &amp; <span>Learning Outcomes</span></h2>
+  <p class="section-sub">What this virtual lab is designed to achieve</p>
+  <div class="aim-grid">
+    <div class="aim-card orange">
+      <div class="aim-icon">🎯</div>
+      <h3>Aim</h3>
+      <p>To provide an interactive environment for students to understand, compute, and visualize maxima, minima, and saddle points of functions of two variables using the second derivative test.</p>
+    </div>
+    <div class="aim-card teal">
+      <div class="aim-icon">🔭</div>
+      <h3>Vision</h3>
+      <p>Empower students to intuitively grasp multivariable calculus through step-by-step computation, symbolic math, and dynamic 3D surface visualization—bridging theory and practice.</p>
+    </div>
+    <div class="aim-card blue">
+      <div class="aim-icon">📚</div>
+      <h3>Learning Outcomes</h3>
+      <ul>
+        <li>Compute first-order partial derivatives f<sub>x</sub> and f<sub>y</sub></li>
+        <li>Find critical points by solving f<sub>x</sub> = 0, f<sub>y</sub> = 0</li>
+        <li>Evaluate f<sub>xx</sub>, f<sub>yy</sub>, f<sub>xy</sub></li>
+        <li>Calculate D = f<sub>xx</sub>f<sub>yy</sub> − (f<sub>xy</sub>)²</li>
+        <li>Classify: maximum, minimum, or saddle</li>
+      </ul>
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
+
+<!-- THEORY -->
+<section class="section" id="theory">
+  <h2 class="section-title">Topic Introduction <span>&amp; Theory</span></h2>
+  <p class="section-sub">Definitions, formulas, worked examples, and a quick-reference glossary</p>
+  <div class="card">
+    <div class="theory-block">
+      <h4>1. Functions of Two Variables</h4>
+      <p>A function of two variables assigns a real number z to each ordered pair (x, y): <strong>z = f(x, y)</strong>. Its graph is a surface in 3D space. We seek
+        <span class="glossary">critical points<span class="glossary-tip">Points where both partial derivatives are zero — candidates for max, min, or saddle</span></span>
+        where the surface has a peak, valley, or pass.</p>
+    </div>
+    <div class="theory-block">
+      <h4>2. First-Order Partial Derivatives</h4>
+      <div class="formula-box">f_x = ∂f/∂x  (treat y as constant)
+f_y = ∂f/∂y  (treat x as constant)</div>
+      <p>A <span class="glossary">critical point<span class="glossary-tip">Where f_x = 0 AND f_y = 0 simultaneously</span></span> occurs where both f<sub>x</sub> = 0 and f<sub>y</sub> = 0.</p>
+    </div>
+    <div class="theory-block">
+      <h4>3. Second-Order Partial Derivatives</h4>
+      <div class="formula-box">f_xx = ∂²f/∂x²      (double w.r.t. x)
+f_yy = ∂²f/∂y²      (double w.r.t. y)
+f_xy = ∂²f/∂x∂y    (mixed partial)</div>
+    </div>
+    <div class="theory-block">
+      <h4>4. The Second Derivative Test — Discriminant D</h4>
+      <div class="formula-box">D = f_xx · f_yy − (f_xy)²</div>
+      <div class="table-box">
+        <table><thead><tr><th>Condition</th><th>Classification</th></tr></thead>
+        <tbody>
+          <tr><td>D &gt; 0 and f_xx &lt; 0</td><td>Local Maximum</td></tr>
+          <tr><td>D &gt; 0 and f_xx &gt; 0</td><td>Local Minimum</td></tr>
+          <tr><td>D &lt; 0</td><td>Saddle Point</td></tr>
+          <tr><td>D = 0</td><td>Inconclusive</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+  </div>
+  <div class="example-box">
+    <h5>Example 1 — f(x,y) = x² + y²</h5>
+    <ul>
+      <li>f<sub>x</sub> = 2x, f<sub>y</sub> = 2y → Critical point: (0, 0)</li>
+      <li>f<sub>xx</sub> = 2, f<sub>yy</sub> = 2, f<sub>xy</sub> = 0</li>
+      <li>D = (2)(2) − 0 = <strong>4 &gt; 0</strong>, f<sub>xx</sub> = 2 &gt; 0 → <strong>Local Minimum</strong></li>
+    </ul>
+  </div>
+  <div class="example-box">
+    <h5>Example 2 — f(x,y) = x² − y²</h5>
+    <ul>
+      <li>f<sub>x</sub> = 2x, f<sub>y</sub> = −2y → Critical point: (0, 0)</li>
+      <li>D = (2)(−2) − 0 = <strong>−4 &lt; 0</strong> → <strong>Saddle Point</strong></li>
+    </ul>
+  </div>
+  <div class="example-box">
+    <h5>Example 3 — f(x,y) = −x² − y² + 4x + 6y</h5>
+    <ul>
+      <li>f<sub>x</sub> = −2x+4 = 0 → x = 2; f<sub>y</sub> = −2y+6 = 0 → y = 3</li>
+      <li>D = (−2)(−2) − 0 = <strong>4 &gt; 0</strong>, f<sub>xx</sub> = −2 &lt; 0 → <strong>Local Maximum</strong> at (2, 3)</li>
+    </ul>
+  </div>
+</section>
+<div class="divider"></div>
+
+<!-- CALCULATOR -->
+<section class="section" id="calculator">
+  <h2 class="section-title">Interactive <span>Calculator</span></h2>
+  <p class="section-sub">Full step-by-step critical point analysis — all critical points shown, results copyable</p>
+  <div class="calc-wrap">
+    <div class="calc-header">
+      <span style="font-size:1.1rem">∂</span>
+      <h3>Critical Point Analyzer</h3>
+      <span>math.js · Press Enter to analyze</span>
+    </div>
+    <div class="calc-body">
+      <p class="input-hint">Use <code>x^2</code> for x², <code>*</code> for ×, <code>sin(x)</code>, <code>exp(x)</code>, <code>log(x)</code>. Supports polynomials, trig, exponential.</p>
+      <div class="preset-label">Quick Presets</div>
+      <div class="preset-row" id="preset-row">
+        <button class="preset-btn" onclick="setPreset('x^2+y^2')">x²+y²</button>
+        <button class="preset-btn" onclick="setPreset('x^2-y^2')">x²−y²</button>
+        <button class="preset-btn" onclick="setPreset('x^3+y^3-3*x-3*y')">x³+y³−3x−3y</button>
+        <button class="preset-btn" onclick="setPreset('-x^2-y^2+4*x+6*y')">−x²−y²+4x+6y</button>
+        <button class="preset-btn" onclick="setPreset('x^2+x*y+y^2-3*x')">x²+xy+y²−3x</button>
+        <button class="preset-btn" onclick="setPreset('x^3-3*x*y^2')">x³−3xy²</button>
+        <button class="preset-btn" onclick="setPreset('sin(x)*cos(y)')">sin(x)cos(y)</button>
+      </div>
+      <div class="input-row">
+        <div class="input-group">
+          <label>f(x, y) =</label>
+          <input type="text" id="fn-input" placeholder="e.g. x^2 + y^2" value="x^2+y^2" onkeydown="if(event.key==='Enter')analyze()" />
+        </div>
+      </div>
+      <div class="range-row">
+        <span style="font-size:.78rem;color:var(--ink-faint);font-weight:600;text-transform:uppercase;letter-spacing:.04em">Search range:</span>
+        <div class="range-group"><label>X min</label><input type="number" id="xmin" value="-5" step="1"></div>
+        <div class="range-group"><label>X max</label><input type="number" id="xmax" value="5" step="1"></div>
+        <div class="range-group"><label>Y min</label><input type="number" id="ymin" value="-5" step="1"></div>
+        <div class="range-group"><label>Y max</label><input type="number" id="ymax" value="5" step="1"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-primary" id="analyze-btn" onclick="analyze()">Analyze →</button>
+        <button class="btn-secondary" onclick="clearCalc()">Clear</button>
+        <button class="btn-secondary" onclick="copyResults()" id="copy-results-btn" style="display:none">📋 Copy Results</button>
+        <button class="btn-secondary" onclick="sendToGraph()" id="send-graph-btn" style="display:none">📊 Send to Graph</button>
+      </div>
+      <div class="history-section" id="history-section" style="display:none">
+        <div class="history-label">Recent Functions</div>
+        <div class="history-list" id="history-list"></div>
+      </div>
+      <div id="calc-output"></div>
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
+
+<!-- GRAPH -->
+<section class="section" id="graph">
+  <h2 class="section-title">3D Surface <span>Visualization</span></h2>
+  <p class="section-sub">Rotate · Zoom · Switch views · Mark critical points — all rendered in-browser</p>
+  <div class="graph-wrap">
+    <div class="graph-header">
+      <span class="graph-header-title">Surface Plotter — z = f(x, y)</span>
+      <div class="graph-controls">
+        <button class="graph-ctrl-btn active" id="btn-surface" onclick="setViewMode('surface')">Surface</button>
+        <button class="graph-ctrl-btn" id="btn-wireframe" onclick="setViewMode('wireframe')">Wireframe</button>
+        <button class="graph-ctrl-btn" id="btn-contour" onclick="setViewMode('contour')">Contour</button>
+        <button class="graph-ctrl-btn" id="btn-crit" onclick="toggleCritPoints()">● Points</button>
+        <button class="graph-ctrl-btn" onclick="resetView()">↺ Reset</button>
+        <button class="graph-ctrl-btn" onclick="exportCanvas()">⬇ PNG</button>
+      </div>
+    </div>
+    <div class="graph-note" id="graph-status">💡 Enter a function and click <strong>Plot</strong>. Drag to rotate · Scroll to zoom · Pinch on mobile.</div>
+    <canvas id="surface-canvas" style="background:#0d1117"></canvas>
+    <div class="graph-range-row">
+      <span>Plot range:</span>
+      <span>x:</span><input type="number" id="gxmin" value="-3" step="0.5">
+      <span>to</span><input type="number" id="gxmax" value="3" step="0.5">
+      <span>y:</span><input type="number" id="gymin" value="-3" step="0.5">
+      <span>to</span><input type="number" id="gymax" value="3" step="0.5">
+      <span>z-clip: ±</span><input type="number" id="gzclip" value="8" step="1" style="width:55px">
+    </div>
+    <div class="graph-input-row">
+      <input type="text" id="graph-fn" placeholder="e.g. x^2 + y^2" value="x^2+y^2" onkeydown="if(event.key==='Enter')plotSurface()"/>
+      <button class="btn-graph" onclick="plotSurface()">Plot →</button>
+      <button class="btn-graph" style="background:var(--accent)" onclick="syncGraphFromCalc()">Sync from Calc</button>
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
+
+<!-- COMPARE -->
+<section class="section" id="compare">
+  <h2 class="section-title">Side-by-Side <span>Comparison</span></h2>
+  <p class="section-sub">Analyze two functions simultaneously and compare their critical point classifications</p>
+  <div class="compare-wrap">
+    <div class="compare-panel">
+      <div class="compare-panel-header" style="background:var(--blue-soft);border-color:var(--blue-soft)">
+        <span style="color:var(--blue)">Function A</span>
+      </div>
+      <div style="padding:1rem">
+        <input type="text" id="cmp-a" placeholder="e.g. x^2+y^2" value="x^2+y^2"
+          style="width:100%;padding:.6rem .9rem;border:1.5px solid var(--border-strong);border-radius:7px;font-family:'DM Mono',monospace;font-size:.88rem;background:var(--paper);color:var(--ink);outline:none;margin-bottom:.75rem"
+          onkeydown="if(event.key==='Enter')runCompare()">
+        <div id="cmp-out-a" style="font-size:.83rem;min-height:60px"></div>
+      </div>
+    </div>
+    <div class="compare-panel">
+      <div class="compare-panel-header" style="background:var(--accent-light);border-color:var(--accent-soft)">
+        <span style="color:var(--accent)">Function B</span>
+      </div>
+      <div style="padding:1rem">
+        <input type="text" id="cmp-b" placeholder="e.g. x^2-y^2" value="x^2-y^2"
+          style="width:100%;padding:.6rem .9rem;border:1.5px solid var(--border-strong);border-radius:7px;font-family:'DM Mono',monospace;font-size:.88rem;background:var(--paper);color:var(--ink);outline:none;margin-bottom:.75rem"
+          onkeydown="if(event.key==='Enter')runCompare()">
+        <div id="cmp-out-b" style="font-size:.83rem;min-height:60px"></div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:1rem;display:flex;gap:.5rem">
+    <button class="btn-primary" onclick="runCompare()">Compare Both →</button>
+    <button class="btn-secondary" onclick="document.getElementById('cmp-a').value=document.getElementById('fn-input').value;runCompare()">Import from Calc</button>
+  </div>
+</section>
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section class="section" id="quiz">
+  <h2 class="section-title">Practice <span>MCQ Quiz</span></h2>
+  <p class="section-sub">10 questions · Difficulty filter · Timer · Review wrong answers</p>
+  <div class="quiz-wrap">
+    <div class="quiz-progress"><div class="quiz-progress-bar" id="q-bar" style="width:0%"></div></div>
+    <div class="quiz-body" id="quiz-body"></div>
+  </div>
+</section>
+<div class="divider"></div>
+
+<!-- CONTRIBUTORS -->
+<section class="section" id="contributors">
+  <h2 class="section-title">Contributors <span>&amp; Credits</span></h2>
+  <p class="section-sub">The people and tools behind this virtual lab</p>
+  <div class="contrib-grid">
+    <div class="contrib-card">
+      <div class="contrib-avatar" style="background:#fff7ed;border-color:#fed7aa">👨‍🏫</div>
+      <h4>Prof. R.G. Talekar</h4>
+      <p>Guide &amp; Mentor</p>
+      <p style="margin-top:.3rem;font-size:.75rem;color:var(--ink-faint)">PCCOE, Pune</p>
+    </div>
+    <div class="contrib-card">
+      <div class="contrib-avatar" style="background:#eff6ff;border-color:#bfdbfe">👨‍💻</div>
+      <h4>Aditya Pachpute</h4>
+      <p>Developer</p>
+      <p style="margin-top:.3rem;font-size:.75rem;color:var(--ink-faint)">PCCOE, Pune</p>
+    </div>
+    <div class="contrib-card">
+      <div class="contrib-avatar" style="background:#f0fdf4;border-color:#bbf7d0">🏛️</div>
+      <h4>PCCOE, Pune</h4>
+      <p>Pimpri Chinchwad College of Engineering</p>
+    </div>
+  </div>
+  <div class="tools-row" style="margin-top:1.75rem">
+    <div class="tool-badge"><div class="dot" style="background:#f97316"></div>math.js — Symbolic Differentiation</div>
+    <div class="tool-badge"><div class="dot" style="background:#0f766e"></div>Canvas API — 3D Surface Renderer</div>
+    <div class="tool-badge"><div class="dot" style="background:#1d4ed8"></div>HTML / CSS / JavaScript</div>
+    <div class="tool-badge"><div class="dot" style="background:#333"></div>GitHub — Version Control</div>
+  </div>
+</section>
+
+<footer>
+  <strong>Virtual Lab — Maxima &amp; Minima of f(x, y)</strong><br>
+  Guide: Prof. R.G. Talekar · Developer: Aditya Pachpute · PCCOE, Pune<br>
+  <span style="margin-top:.4rem;display:block">Built with math.js · Canvas 3D · Open Web Standards</span>
+</footer>
+
+<div class="export-toast" id="export-toast"></div>
+
+<script>
+/* ═══════════════════════════════════════
+   THEME
+═══════════════════════════════════════ */
+function toggleTheme(){
+  const d=document.documentElement;
+  const isDark=d.getAttribute('data-theme')==='dark';
+  d.setAttribute('data-theme',isDark?'light':'dark');
+  document.getElementById('theme-btn').textContent=isDark?'🌙 Dark':'☀️ Light';
+  if(surfaceState.expr) drawSurface();
+}
+
+/* ═══════════════════════════════════════
+   NAV
+═══════════════════════════════════════ */
+const navLinks=document.querySelectorAll('.nav-link');
+const sectionIds=['aim','theory','calculator','graph','compare','quiz','contributors'];
+window.addEventListener('scroll',()=>{
+  let cur='';
+  sectionIds.forEach(id=>{
+    const el=document.getElementById(id);
+    if(el&&window.scrollY>=el.offsetTop-90) cur=id;
+  });
+  navLinks.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+cur));
+});
+function toggleMobileMenu(){
+  document.getElementById('mobile-menu').classList.toggle('open');
+}
+function closeMobileMenu(){
+  document.getElementById('mobile-menu').classList.remove('open');
+}
+
+/* ═══════════════════════════════════════
+   TOAST
+═══════════════════════════════════════ */
+function showToast(msg){
+  const t=document.getElementById('export-toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+/* ═══════════════════════════════════════
+   HISTORY
+═══════════════════════════════════════ */
+let fnHistory=[];
+function addHistory(fn){
+  if(fnHistory.includes(fn)) return;
+  fnHistory.unshift(fn);
+  if(fnHistory.length>8) fnHistory.pop();
+  renderHistory();
+}
+function renderHistory(){
+  const list=document.getElementById('history-list');
+  const sec=document.getElementById('history-section');
+  if(fnHistory.length===0){sec.style.display='none';return;}
+  sec.style.display='block';
+  list.innerHTML=fnHistory.map((fn,i)=>`
+    <div class="history-chip" onclick="setPreset('${fn.replace(/'/g,"\\'")}')">
+      ${fn}
+      <span class="del" onclick="event.stopPropagation();removeHistory(${i})">✕</span>
+    </div>`).join('');
+}
+function removeHistory(i){fnHistory.splice(i,1);renderHistory();}
+
+/* ═══════════════════════════════════════
+   PRESET
+═══════════════════════════════════════ */
+function setPreset(fn){
+  document.getElementById('fn-input').value=fn;
+  document.getElementById('calc-output').innerHTML='';
+  document.getElementById('copy-results-btn').style.display='none';
+  document.getElementById('send-graph-btn').style.display='none';
+}
+
+/* ═══════════════════════════════════════
+   CALCULATOR CORE
+═══════════════════════════════════════ */
+let lastResult=null;
+
+function clearCalc(){
+  document.getElementById('fn-input').value='';
+  document.getElementById('calc-output').innerHTML='';
+  document.getElementById('copy-results-btn').style.display='none';
+  document.getElementById('send-graph-btn').style.display='none';
+}
+
+function analyze(){
+  const raw=document.getElementById('fn-input').value.trim();
+  const out=document.getElementById('calc-output');
+  if(!raw){out.innerHTML='<div class="error-box">Please enter a function.</div>';return;}
+  const btn=document.getElementById('analyze-btn');
+  btn.disabled=true;
+  btn.innerHTML='<span class="spinner"></span> Analyzing…';
+  out.innerHTML='';
+  setTimeout(()=>{
+    try{
+      const xmin=parseFloat(document.getElementById('xmin').value)||(-5);
+      const xmax=parseFloat(document.getElementById('xmax').value)||5;
+      const ymin=parseFloat(document.getElementById('ymin').value)||(-5);
+      const ymax=parseFloat(document.getElementById('ymax').value)||5;
+      const result=computeAnalysis(raw,xmin,xmax,ymin,ymax);
+      lastResult=result;
+      out.innerHTML=renderSteps(result);
+      addHistory(raw);
+      document.getElementById('copy-results-btn').style.display='';
+      document.getElementById('send-graph-btn').style.display='';
+      // attach toggle
+      document.querySelectorAll('.step-header').forEach(h=>{
+        h.addEventListener('click',()=>{
+          h.parentElement.classList.toggle('collapsed');
+        });
+      });
+    }catch(e){
+      out.innerHTML=`<div class="error-box">⚠️ Could not parse: ${e.message}<br><small>Check syntax — use * for ×, ^ for powers, e.g. x^2+y^2</small></div>`;
+    }
+    btn.disabled=false; btn.textContent='Analyze →';
+  },60);
+}
+
+function symbolicDiff(exprStr,variable){
+  return math.derivative(math.parse(exprStr),variable).toString();
+}
+function evalAt(exprStr,x,y){
+  return math.evaluate(exprStr,{x,y});
+}
+function simplify(s){
+  try{return math.simplify(s).toString();}catch(e){return s;}
+}
+
+function findCriticalPoints(fxStr,fyStr,xmin,xmax,ymin,ymax){
+  const pts=[];
+  const N=64;
+  const sx=(xmax-xmin)/N, sy=(ymax-ymin)/N;
+  for(let xi=0;xi<N;xi++){
+    for(let yi=0;yi<N;yi++){
+      const x0=xmin+xi*sx, y0=ymin+yi*sy;
+      const x1=x0+sx,       y1=y0+sy;
+      const corners=[[x0,y0],[x1,y0],[x0,y1],[x1,y1]];
+      const fxV=corners.map(([cx,cy])=>{try{return evalAt(fxStr,cx,cy);}catch(e){return NaN;}});
+      const fyV=corners.map(([cx,cy])=>{try{return evalAt(fyStr,cx,cy);}catch(e){return NaN;}});
+      const fxMn=Math.min(...fxV),fxMx=Math.max(...fxV);
+      const fyMn=Math.min(...fyV),fyMx=Math.max(...fyV);
+      const EPS = 1e-3;
+
+      const fxHasRoot =
+          (fxMn * fxMx <= 0) ||
+          Math.abs(fxMn) < EPS ||
+          Math.abs(fxMx) < EPS;
+
+      const fyHasRoot =
+          (fyMn * fyMx <= 0) ||
+          Math.abs(fyMn) < EPS ||
+          Math.abs(fyMx) < EPS;
+
+      if(fxHasRoot && fyHasRoot){      
+        let cx=(x0+x1)/2,cy=(y0+y1)/2;
+        for(let k=0;k<60;k++){
+          let fxv,fyv;
+          try{fxv=evalAt(fxStr,cx,cy);fyv=evalAt(fyStr,cx,cy);}catch(e){break;}
+          if(Math.abs(fxv)<1e-9&&Math.abs(fyv)<1e-9) break;
+          const h=1e-5;
+          let dfxdx,dfxdy,dfydx,dfydy;
+          try{
+            dfxdx=(evalAt(fxStr,cx+h,cy)-evalAt(fxStr,cx-h,cy))/(2*h);
+            dfxdy=(evalAt(fxStr,cx,cy+h)-evalAt(fxStr,cx,cy-h))/(2*h);
+            dfydx=(evalAt(fyStr,cx+h,cy)-evalAt(fyStr,cx-h,cy))/(2*h);
+            dfydy=(evalAt(fyStr,cx,cy+h)-evalAt(fyStr,cx,cy-h))/(2*h);
+          }catch(e){break;}
+          const det=dfxdx*dfydy-dfxdy*dfydx;
+          if(Math.abs(det)<1e-12) break;
+          const dx=-(fxv*dfydy-fyv*dfxdy)/det;
+          const dy=-(fyv*dfxdx-fxv*dfydx)/det;
+          cx+=dx; cy+=dy;
+          if(Math.abs(dx)<1e-9&&Math.abs(dy)<1e-9) break;
+        }
+        if(!isFinite(cx)||!isFinite(cy)) continue;
+        let fxv,fyv;
+        try{fxv=evalAt(fxStr,cx,cy);fyv=evalAt(fyStr,cx,cy);}catch(e){continue;}
+        if(Math.abs(fxv)<1e-3&&Math.abs(fyv)<1e-3){
+          if(!pts.some(p=>Math.abs(p.x-cx)<0.01&&Math.abs(p.y-cy)<0.01)){
+            pts.push({x:cx,y:cy});
+          }
+        }
+      }
+    }
+  }
+  return pts;
+}
+
+function classifyPoint(fxxStr,fyyStr,fxyStr,x,y){
+  const fxxN=evalAt(fxxStr,x,y);
+  const fyyN=evalAt(fyyStr,x,y);
+  const fxyN=evalAt(fxyStr,x,y);
+  const D=fxxN*fyyN-fxyN*fxyN;
+  let cls;
+  if(D>0&&fxxN<0) cls='maximum';
+  else if(D>0&&fxxN>0) cls='minimum';
+  else if(D<0) cls='saddle';
+  else cls='inconclusive';
+  return{fxxN,fyyN,fxyN,D,cls};
+}
+
+function computeAnalysis(expr,xmin,xmax,ymin,ymax){
+  math.parse(expr); // validate
+  const fxRaw=symbolicDiff(expr,'x');
+  const fyRaw=symbolicDiff(expr,'y');
+  const fxxRaw=symbolicDiff(fxRaw,'x');
+  const fyyRaw=symbolicDiff(fyRaw,'y');
+  const fxyRaw=symbolicDiff(fxRaw,'y');
+  const fx=simplify(fxRaw),fy=simplify(fyRaw);
+  const fxx=simplify(fxxRaw),fyy=simplify(fyyRaw),fxy=simplify(fxyRaw);
+  const critPoints=findCriticalPoints(fx,fy,xmin,xmax,ymin,ymax);
+  const classifications=critPoints.map(pt=>{
+    try{
+      const r=classifyPoint(fxx,fyy,fxy,pt.x,pt.y);
+      return{x:pt.x,y:pt.y,...r};
+    }catch(e){return null;}
+  }).filter(Boolean);
+  return{expr,fx,fy,fxx,fyy,fxy,critPoints,classifications};
+}
+
+/* ═══════════════════════════════════════
+   RENDER STEPS
+═══════════════════════════════════════ */
+function renderSteps(r){
+  const d=i=>`animation-delay:${i*0.1}s`;
+  let h='<div class="steps-container">';
+
+  // Step 1
+  h+=`<div class="step" style="${d(0)}">
+  <div class="step-header"><div class="step-num">1</div><div class="step-title">First-order partial derivatives</div><span class="step-toggle">▾</span></div>
+  <div class="step-body">
+    <div class="line"><span class="lbl">f(x,y) =</span><span class="val">${r.expr}</span></div>
+    <div class="line"><span class="lbl">f_x =</span><span class="val">${r.fx}</span></div>
+    <div class="line"><span class="lbl">f_y =</span><span class="val">${r.fy}</span></div>
+  </div></div>`;
+
+  // Step 2
+  let cpHtml='';
+  if(r.critPoints.length===0){
+    cpHtml='<span style="color:var(--ink-muted)">No critical points found in the search range. Try expanding the range or verify the function.</span>';
+  } else {
+    cpHtml=`<table class="cp-table"><thead><tr><th>#</th><th>x</th><th>y</th></tr></thead><tbody>`;
+    r.critPoints.forEach((p,i)=>{
+      cpHtml+=`<tr><td>${i+1}</td><td>${p.x.toFixed(4)}</td><td>${p.y.toFixed(4)}</td></tr>`;
+    });
+    cpHtml+=`</tbody></table>`;
+  }
+  h+=`<div class="step" style="${d(1)}">
+  <div class="step-header"><div class="step-num">2</div><div class="step-title">Critical points — solve f_x = 0 and f_y = 0 (${r.critPoints.length} found)</div><span class="step-toggle">▾</span></div>
+  <div class="step-body">${cpHtml}</div></div>`;
+
+  // Step 3
+  h+=`<div class="step" style="${d(2)}">
+  <div class="step-header"><div class="step-num">3</div><div class="step-title">Second-order partial derivatives</div><span class="step-toggle">▾</span></div>
+  <div class="step-body">
+    <div class="line"><span class="lbl">f_xx =</span><span class="val">${r.fxx}</span></div>
+    <div class="line"><span class="lbl">f_yy =</span><span class="val">${r.fyy}</span></div>
+    <div class="line"><span class="lbl">f_xy =</span><span class="val">${r.fxy}</span></div>
+  </div></div>`;
+
+  // Step 4 — D table
+  let dHtml='';
+  if(r.classifications.length===0){
+    dHtml='<span style="color:var(--ink-muted)">No critical points to evaluate.</span>';
+  } else {
+    dHtml=`<table class="cp-table"><thead><tr><th>(x,y)</th><th>f_xx</th><th>f_yy</th><th>f_xy</th><th>D</th></tr></thead><tbody>`;
+    r.classifications.forEach(c=>{
+      dHtml+=`<tr>
+        <td>(${c.x.toFixed(3)}, ${c.y.toFixed(3)})</td>
+        <td>${c.fxxN.toFixed(3)}</td><td>${c.fyyN.toFixed(3)}</td><td>${c.fxyN.toFixed(3)}</td>
+        <td><strong>${c.D.toFixed(3)}</strong></td>
+      </tr>`;
+    });
+    dHtml+='</tbody></table>';
+  }
+  h+=`<div class="step" style="${d(3)}">
+  <div class="step-header"><div class="step-num">4</div><div class="step-title">Discriminant D = f_xx·f_yy − (f_xy)²</div><span class="step-toggle">▾</span></div>
+  <div class="step-body">${dHtml}</div></div>`;
+
+  // Step 5 — classification
+  const icons={maximum:'',minimum:'',saddle:'',inconclusive:''};
+  const labels={maximum:'Local Maximum',minimum:'Local Minimum',saddle:'Saddle Point',inconclusive:'Inconclusive'};
+  const badgeCls={maximum:'badge-max',minimum:'badge-min',saddle:'badge-sad',inconclusive:'badge-inc'};
+  const descs={
+    maximum:(x,y)=>`D > 0 and f_xx < 0: surface curves downward in all directions at (${x}, ${y}).`,
+    minimum:(x,y)=>`D > 0 and f_xx > 0: surface curves upward in all directions at (${x}, ${y}).`,
+    saddle:(x,y)=>`D < 0: surface curves in opposite directions at (${x}, ${y}) — a saddle point.`,
+    inconclusive:(x,y)=>`D = 0: the test is inconclusive at (${x}, ${y}).`
+  };
+
+  let clsHtml='';
+  if(r.classifications.length===0){
+    clsHtml='<span style="color:var(--ink-muted)">No critical points to classify.</span>';
+  } else {
+    r.classifications.forEach(c=>{
+      const xs=c.x.toFixed(3),ys=c.y.toFixed(3);
+      clsHtml+=`<div class="conclusion-box ${c.cls}" style="margin-bottom:.6rem">
+        <div class="conclusion-text">
+          <strong>${labels[c.cls]} at (${xs}, ${ys})</strong>
+          <span>${descs[c.cls](xs,ys)}</span>
+        </div>
+      </div>`;
+    });
+  }
+  h+=`<div class="step" style="${d(4)}">
+  <div class="step-header"><div class="step-num">5</div><div class="step-title">Final Classification — all ${r.classifications.length} critical point(s)</div><span class="step-toggle">▾</span></div>
+  <div class="step-body">${clsHtml}</div></div>`;
+
+  h+='</div>';
+  return h;
+}
+
+/* copy */
+function copyResults(){
+  if(!lastResult) return;
+  const r=lastResult;
+  let txt=`Virtual Lab — Maxima & Minima Analysis\nf(x,y) = ${r.expr}\n\n`;
+  txt+=`f_x = ${r.fx}\nf_y = ${r.fy}\nf_xx = ${r.fxx}\nf_yy = ${r.fyy}\nf_xy = ${r.fxy}\n\n`;
+  txt+=`Critical Points Found: ${r.critPoints.length}\n`;
+  r.classifications.forEach((c,i)=>{
+    txt+=`  Point ${i+1}: (${c.x.toFixed(4)}, ${c.y.toFixed(4)}) — D=${c.D.toFixed(4)} → ${c.cls}\n`;
+  });
+  navigator.clipboard.writeText(txt).then(()=>showToast('✅ Results copied to clipboard'));
+}
+
+function sendToGraph(){
+  const fn=document.getElementById('fn-input').value.trim();
+  if(fn){
+    document.getElementById('graph-fn').value=fn;
+    plotSurface();
+    document.getElementById('graph').scrollIntoView({behavior:'smooth'});
+  }
+}
+
+/* ═══════════════════════════════════════
+   3D SURFACE RENDERER
+═══════════════════════════════════════ */
+const surfaceState={
+  rotX:.55, rotY:-.55, zoom:1,
+  dragging:false, lastX:0, lastY:0, lastDist:0,
+  expr:'x^2+y^2',
+  viewMode:'surface',
+  showCritPoints:false,
+  critPts:[],
+  animFrame:null
+};
+
+function initCanvas(){
+  const canvas=document.getElementById('surface-canvas');
+  const dpr=window.devicePixelRatio||1;
+  canvas.width=canvas.offsetWidth*dpr;
+  canvas.height=canvas.offsetHeight*dpr;
+
+  canvas.onmousedown=e=>{surfaceState.dragging=true;surfaceState.lastX=e.clientX;surfaceState.lastY=e.clientY;canvas.style.cursor='grabbing';};
+  canvas.onmousemove=e=>{
+    if(!surfaceState.dragging) return;
+    surfaceState.rotY+=(e.clientX-surfaceState.lastX)*.012;
+    surfaceState.rotX+=(e.clientY-surfaceState.lastY)*.012;
+    surfaceState.lastX=e.clientX;surfaceState.lastY=e.clientY;
+    drawSurface();
+  };
+  canvas.onmouseup=canvas.onmouseleave=()=>{surfaceState.dragging=false;canvas.style.cursor='grab';};
+  canvas.onwheel=e=>{
+    e.preventDefault();
+    surfaceState.zoom*=e.deltaY>0?.92:1.08;
+    surfaceState.zoom=Math.max(.3,Math.min(3,surfaceState.zoom));
+    drawSurface();
+  };
+  // Touch
+  canvas.ontouchstart=e=>{
+    e.preventDefault();
+    if(e.touches.length===1){surfaceState.dragging=true;surfaceState.lastX=e.touches[0].clientX;surfaceState.lastY=e.touches[0].clientY;}
+    else if(e.touches.length===2){surfaceState.dragging=false;surfaceState.lastDist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);}
+  };
+  canvas.ontouchmove=e=>{
+    e.preventDefault();
+    if(e.touches.length===1&&surfaceState.dragging){
+      surfaceState.rotY+=(e.touches[0].clientX-surfaceState.lastX)*.012;
+      surfaceState.rotX+=(e.touches[0].clientY-surfaceState.lastY)*.012;
+      surfaceState.lastX=e.touches[0].clientX;surfaceState.lastY=e.touches[0].clientY;
+      drawSurface();
+    } else if(e.touches.length===2){
+      const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
+      surfaceState.zoom*=d/surfaceState.lastDist;
+      surfaceState.zoom=Math.max(.3,Math.min(3,surfaceState.zoom));
+      surfaceState.lastDist=d;
+      drawSurface();
+    }
+  };
+  canvas.ontouchend=()=>{surfaceState.dragging=false;};
+}
+
+function setViewMode(mode){
+  surfaceState.viewMode=mode;
+  ['surface','wireframe','contour'].forEach(m=>{
+    document.getElementById('btn-'+m).classList.toggle('active',m===mode);
+  });
+  drawSurface();
+}
+
+function toggleCritPoints(){
+  surfaceState.showCritPoints=!surfaceState.showCritPoints;
+  document.getElementById('btn-crit').classList.toggle('active',surfaceState.showCritPoints);
+  drawSurface();
+}
+
+function resetView(){surfaceState.rotX=.55;surfaceState.rotY=-.55;surfaceState.zoom=1;drawSurface();}
+
+function exportCanvas(){
+  const c=document.getElementById('surface-canvas');
+  const a=document.createElement('a');
+  a.download=`surface_${surfaceState.expr.replace(/[^a-zA-Z0-9]/g,'_')}.png`;
+  a.href=c.toDataURL('image/png');
+  a.click();
+  showToast('📥 PNG downloaded!');
+}
+
+function plotSurface(){
+  const fnStr=document.getElementById('graph-fn').value.trim();
+  if(!fnStr) return;
+  try{
+    math.evaluate(fnStr,{x:1,y:1});
+    surfaceState.expr=fnStr;
+    // Pull crit points from last calc if function matches
+    if(lastResult&&lastResult.expr===fnStr){
+      surfaceState.critPts=lastResult.classifications.map(c=>({x:c.x,y:c.y,cls:c.cls}));
+    } else {
+      surfaceState.critPts=[];
+    }
+    document.getElementById('graph-status').innerHTML=`📈 Plotting <strong>z = ${fnStr}</strong>. Drag to rotate · Scroll to zoom.`;
+    drawSurface();
+  }catch(e){
+    document.getElementById('graph-status').innerHTML=`⚠️ Cannot parse: ${e.message}`;
+  }
+}
+
+function syncGraphFromCalc(){
+  const fn=document.getElementById('fn-input').value.trim();
+  if(fn){document.getElementById('graph-fn').value=fn;plotSurface();}
+}
+
+function drawSurface(){
+  const canvas=document.getElementById('surface-canvas');
+  const dpr=window.devicePixelRatio||1;
+  if(canvas.width!==canvas.offsetWidth*dpr){
+    canvas.width=canvas.offsetWidth*dpr;
+    canvas.height=canvas.offsetHeight*dpr;
+  }
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width,H=canvas.height;
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  const bg=isDark?'#0d1117':'#f0f0f0';
+  ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
+
+  if(surfaceState.viewMode==='contour'){drawContour(ctx,W,H,isDark);return;}
+
+  const expr=surfaceState.expr;
+  const xmin=parseFloat(document.getElementById('gxmin').value)||-3;
+  const xmax=parseFloat(document.getElementById('gxmax').value)||3;
+  const ymin=parseFloat(document.getElementById('gymin').value)||-3;
+  const ymax=parseFloat(document.getElementById('gymax').value)||3;
+  const zclip=parseFloat(document.getElementById('gzclip').value)||8;
+  const N=44;
+
+  const pts=[];
+  let zMin=Infinity,zMax=-Infinity;
+  for(let i=0;i<=N;i++){
+    pts[i]=[];
+    for(let j=0;j<=N;j++){
+      const x=xmin+i*(xmax-xmin)/N;
+      const y=ymin+j*(ymax-ymin)/N;
+      let z;
+      try{z=math.evaluate(expr,{x,y});}catch(e){z=0;}
+      if(!isFinite(z)||isNaN(z)) z=0;
+      z=Math.max(-zclip,Math.min(zclip,z));
+      pts[i][j]={x,y,z};
+      if(z<zMin) zMin=z;
+      if(z>zMax) zMax=z;
+    }
+  }
+  const zRange=zMax-zMin||1;
+
+  const cx2=Math.cos(surfaceState.rotX),sx2=Math.sin(surfaceState.rotX);
+  const cy2=Math.cos(surfaceState.rotY),sy2=Math.sin(surfaceState.rotY);
+  function rotate(x,y,z){
+    const x1=cy2*x+sy2*z,y1=y,z1=-sy2*x+cy2*z;
+    return{x:x1,y:cx2*y1-sx2*z1,z:sx2*y1+cx2*z1};
+  }
+  const scale=Math.min(W,H)*0.28*surfaceState.zoom;
+  const FOV=6;
+  function project(rx,ry,rz){
+    const d=FOV+rz;
+    return{px:W/2+(rx/d)*scale*FOV,py:H/2-(ry/d)*scale*FOV};
+  }
+  function norm(x,y,z){
+    const xn=(x-xmin)/(xmax-xmin)*2-1;
+    const yn=(y-ymin)/(ymax-ymin)*2-1;
+    const zn=(z-zMin)/zRange*1.2-0.6;
+    return{xn,yn,zn};
+  }
+
+  function zColor(z,alpha){
+    const t=(z-zMin)/zRange;
+    if(isDark){
+      const r=Math.round(40+t*200),g=Math.round(80+t*60),b=Math.round(200-t*160);
+      return`rgba(${r},${g},${b},${alpha})`;
+    } else {
+      const r=Math.round(60+t*180),g=Math.round(100+t*40),b=Math.round(220-t*180);
+      return`rgba(${r},${g},${b},${alpha})`;
+    }
+  }
+
+  const faces=[];
+  for(let i=0;i<N;i++){
+    for(let j=0;j<N;j++){
+      const p00=pts[i][j],p10=pts[i+1][j],p01=pts[i][j+1],p11=pts[i+1][j+1];
+      const avgZ=(p00.z+p10.z+p01.z+p11.z)/4;
+      const n00=norm(p00.x,p00.y,p00.z),n10=norm(p10.x,p10.y,p10.z);
+      const n01=norm(p01.x,p01.y,p01.z),n11=norm(p11.x,p11.y,p11.z);
+      const r00=rotate(n00.xn,n00.zn,n00.yn),r10=rotate(n10.xn,n10.zn,n10.yn);
+      const r01=rotate(n01.xn,n01.zn,n01.yn),r11=rotate(n11.xn,n11.zn,n11.yn);
+      faces.push({r00,r10,r01,r11,avgZ});
+    }
+  }
+  faces.sort((a,b)=>a.r00.z-b.r00.z);
+
+  faces.forEach(({r00,r10,r01,r11,avgZ})=>{
+    const q00=project(r00.x,r00.y,r00.z),q10=project(r10.x,r10.y,r10.z);
+    const q11=project(r11.x,r11.y,r11.z),q01=project(r01.x,r01.y,r01.z);
+    ctx.beginPath();
+    ctx.moveTo(q00.px,q00.py);ctx.lineTo(q10.px,q10.py);
+    ctx.lineTo(q11.px,q11.py);ctx.lineTo(q01.px,q01.py);
+    ctx.closePath();
+    if(surfaceState.viewMode==='wireframe'){
+      ctx.strokeStyle=zColor(avgZ,.8);ctx.lineWidth=.7;ctx.stroke();
+    } else {
+      ctx.fillStyle=zColor(avgZ,.88);ctx.fill();
+      ctx.strokeStyle=zColor(avgZ,.25);ctx.lineWidth=.4;ctx.stroke();
+    }
+  });
+
+  // Axes
+  function drawAxis(fx,fy,fz,tx,ty,tz,col,lbl){
+    const rfr=rotate(fx,fy,fz),rto=rotate(tx,ty,tz);
+    const pf=project(rfr.x,rfr.y,rfr.z),pt=project(rto.x,rto.y,rto.z);
+    ctx.beginPath();ctx.moveTo(pf.px,pf.py);ctx.lineTo(pt.px,pt.py);
+    ctx.strokeStyle=col;ctx.lineWidth=1.5*dpr;ctx.stroke();
+    ctx.fillStyle=col;ctx.font=`bold ${12*dpr}px sans-serif`;
+    ctx.fillText(lbl,pt.px+4*dpr,pt.py+4*dpr);
+  }
+  const A=1.3;
+  drawAxis(-A,0,0,A,0,0,'#ff6b6b','x');
+  drawAxis(0,0,-A,0,0,A,'#69db7c','y');
+  drawAxis(0,-A,0,0,A,0,'#74c0fc','z');
+
+  // Critical points
+  if(surfaceState.showCritPoints&&surfaceState.critPts.length>0){
+    surfaceState.critPts.forEach(cp=>{
+      try{
+        const zv=math.evaluate(expr,{x:cp.x,y:cp.y});
+        const xn2=(cp.x-xmin)/(xmax-xmin)*2-1;
+        const yn2=(cp.y-ymin)/(ymax-ymin)*2-1;
+        const zn2=(zv-zMin)/zRange*1.2-0.6;
+        const rp=rotate(xn2,zn2,yn2);
+        const pp=project(rp.x,rp.y,rp.z);
+        const colors={maximum:'#14b8a6',minimum:'#3b82f6',saddle:'#f97316',inconclusive:'#888'};
+        ctx.beginPath();
+        ctx.arc(pp.px,pp.py,7*dpr,0,Math.PI*2);
+        ctx.fillStyle=colors[cp.cls]||'#fff';ctx.fill();
+        ctx.strokeStyle='#fff';ctx.lineWidth=2*dpr;ctx.stroke();
+      }catch(e){}
+    });
+  }
+
+  // Colorbar
+  const LW=12*dpr,LH=90*dpr;
+  const lx=W-36*dpr,ly=H/2-LH/2;
+  const grad=ctx.createLinearGradient(0,ly,0,ly+LH);
+  grad.addColorStop(0,zColor(zMax,1));
+  grad.addColorStop(.5,zColor((zMin+zMax)/2,1));
+  grad.addColorStop(1,zColor(zMin,1));
+  ctx.fillStyle=grad;ctx.fillRect(lx,ly,LW,LH);
+  ctx.strokeStyle=isDark?'rgba(255,255,255,.2)':'rgba(0,0,0,.15)';
+  ctx.lineWidth=.5;ctx.strokeRect(lx,ly,LW,LH);
+  const tc=isDark?'rgba(255,255,255,.65)':'rgba(0,0,0,.55)';
+  ctx.fillStyle=tc;ctx.font=`${9*dpr}px sans-serif`;
+  ctx.fillText(zMax.toFixed(1),lx-22*dpr,ly+8*dpr);
+  ctx.fillText(zMin.toFixed(1),lx-22*dpr,ly+LH+2*dpr);
+
+  // Title
+  ctx.fillStyle=isDark?'rgba(255,255,255,.5)':'rgba(0,0,0,.4)';
+  ctx.font=`${10*dpr}px sans-serif`;
+  ctx.fillText(`z = ${surfaceState.expr}`,10*dpr,20*dpr);
+
+  const hint=isDark?'rgba(255,255,255,.3)':'rgba(0,0,0,.25)';
+  ctx.fillStyle=hint;ctx.font=`${9*dpr}px sans-serif`;
+  ctx.fillText('drag to rotate · scroll to zoom',10*dpr,H-10*dpr);
+}
+
+function drawContour(ctx,W,H,isDark){
+  const expr=surfaceState.expr;
+  const xmin=parseFloat(document.getElementById('gxmin').value)||-3;
+  const xmax=parseFloat(document.getElementById('gxmax').value)||3;
+  const ymin=parseFloat(document.getElementById('gymin').value)||-3;
+  const ymax=parseFloat(document.getElementById('gymax').value)||3;
+  const zclip=parseFloat(document.getElementById('gzclip').value)||8;
+  const N=120;
+  let zMin=Infinity,zMax=-Infinity;
+  const grid=[];
+  for(let j=0;j<=N;j++){
+    grid[j]=[];
+    for(let i=0;i<=N;i++){
+      const x=xmin+i*(xmax-xmin)/N;
+      const y=ymax-j*(ymax-ymin)/N;
+      let z;
+      try{z=math.evaluate(expr,{x,y});}catch(e){z=0;}
+      if(!isFinite(z)||isNaN(z)) z=0;
+      z=Math.max(-zclip,Math.min(zclip,z));
+      grid[j][i]=z;
+      if(z<zMin)zMin=z;if(z>zMax)zMax=z;
+    }
+  }
+  const imgData=ctx.createImageData(W,H);
+  for(let pj=0;pj<H;pj++){
+    for(let pi=0;pi<W;pi++){
+      const gi=Math.round(pi/W*N),gj=Math.round(pj/H*N);
+      const z=grid[Math.min(gj,N)][Math.min(gi,N)];
+      const t=(z-zMin)/(zMax-zMin||1);
+      const idx=(pj*W+pi)*4;
+      imgData.data[idx]  =Math.round(30+t*200);
+      imgData.data[idx+1]=Math.round(60+t*100);
+      imgData.data[idx+2]=Math.round(200-t*170);
+      imgData.data[idx+3]=255;
+    }
+  }
+  ctx.putImageData(imgData,0,0);
+  // Contour lines
+  const levels=8;
+  for(let lv=1;lv<levels;lv++){
+    const z=zMin+lv*(zMax-zMin)/levels;
+    ctx.beginPath();
+    for(let j=0;j<N;j++){
+      for(let i=0;i<N;i++){
+        const z00=grid[j][i],z10=grid[j][i+1]||z00,z01=grid[j+1]?.[i]||z00;
+        if((z00-z)*(z10-z)<0){
+          const t=(z-z00)/(z10-z00);
+          const px=(i+t)/N*W,py=j/N*H;
+          if(ctx.currentX===undefined) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+        }
+      }
+    }
+    ctx.strokeStyle=`rgba(255,255,255,0.35)`;ctx.lineWidth=1;ctx.stroke();
+    ctx.beginPath();
+  }
+  ctx.fillStyle='rgba(255,255,255,.7)';
+  ctx.font=`${11*(window.devicePixelRatio||1)}px sans-serif`;
+  ctx.fillText(`Contour — z = ${surfaceState.expr}`,10*(window.devicePixelRatio||1),20*(window.devicePixelRatio||1));
+}
+
+window.addEventListener('load',()=>{
+  initCanvas();
+  drawSurface();
+  window.addEventListener('resize',()=>{initCanvas();drawSurface();});
+});
+
+/* ═══════════════════════════════════════
+   COMPARE
+═══════════════════════════════════════ */
+function runCompare(){
+  const a=document.getElementById('cmp-a').value.trim();
+  const b=document.getElementById('cmp-b').value.trim();
+  ['a','b'].forEach((id,idx)=>{
+    const fn=idx===0?a:b;
+    const outEl=document.getElementById('cmp-out-'+id);
+    if(!fn){outEl.innerHTML='<span style="color:var(--ink-faint)">No function entered.</span>';return;}
+    try{
+      const r=computeAnalysis(fn,-5,5,-5,5);
+      const icons={maximum:'',minimum:'',saddle:'',inconclusive:''};
+      const labels={maximum:'Local Maximum',minimum:'Local Minimum',saddle:'Saddle Point',inconclusive:'Inconclusive'};
+      let html=`<div style="font-family:'DM Mono',monospace;font-size:.8rem;margin-bottom:.5rem;color:var(--ink-muted)">`;
+      html+=`f_x = ${r.fx}<br>f_y = ${r.fy}</div>`;
+      if(r.classifications.length===0){
+        html+='<span style="color:var(--ink-faint);font-size:.82rem">No critical points found in [−5,5]</span>';
+      } else {
+        r.classifications.forEach(c=>{
+          html+=`<div style="margin-bottom:.35rem;font-size:.83rem">
+            <strong>(${c.x.toFixed(3)}, ${c.y.toFixed(3)})</strong>
+            &nbsp;<span class="badge ${({maximum:'badge-max',minimum:'badge-min',saddle:'badge-sad',inconclusive:'badge-inc'})[c.cls]}">${labels[c.cls]}</span>
+            <br><span style="color:var(--ink-muted);font-size:.78rem">D = ${c.D.toFixed(3)}, f_xx = ${c.fxxN.toFixed(3)}</span>
+          </div>`;
+        });
+      }
+      outEl.innerHTML=html;
+    }catch(e){
+      outEl.innerHTML=`<span style="color:#b91c1c;font-size:.82rem">Error: ${e.message}</span>`;
+    }
+  });
+}
+
+/* ═══════════════════════════════════════
+   QUIZ
+═══════════════════════════════════════ */
+const ALL_QUESTIONS=[
+  {q:"What is a critical point of f(x,y)?",opts:["Where f=0","Where f_x=0 and f_y=0 simultaneously","Where f is maximum only","Where the graph intersects x-axis"],ans:1,exp:"Both partial derivatives must vanish simultaneously.",diff:'easy'},
+  {q:"If D > 0 and f_xx < 0, the critical point is a:",opts:["Saddle point","Local minimum","Local maximum","Inflection point"],ans:2,exp:"D>0 and f_xx<0 means the surface curves downward — local maximum.",diff:'easy'},
+  {q:"For f(x,y)=x²+y², the critical point (0,0) is a:",opts:["Saddle point","Local maximum","Local minimum","None"],ans:2,exp:"D=4>0 and f_xx=2>0 → local minimum at (0,0).",diff:'easy'},
+  {q:"The discriminant D equals:",opts:["f_xx+f_yy","f_xx·f_yy+(f_xy)²","f_xx·f_yy−(f_xy)²","f_x·f_y"],ans:2,exp:"D=f_xx·f_yy−(f_xy)² is the standard formula.",diff:'easy'},
+  {q:"If D < 0 at a critical point, it is a:",opts:["Local maximum","Local minimum","Saddle point","Inflection"],ans:2,exp:"D<0 → opposite curvatures in different directions = saddle.",diff:'easy'},
+  {q:"For f(x,y)=x²−y², classify (0,0):",opts:["Local min","Local max","Saddle","Inconclusive"],ans:2,exp:"D=(2)(−2)−0=−4<0 → saddle point.",diff:'medium'},
+  {q:"f_xy means:",opts:["∂²f/∂x²","∂/∂y(∂f/∂x)","∂f/∂x + ∂f/∂y","None"],ans:1,exp:"f_xy = ∂²f/∂x∂y = mixed second partial.",diff:'medium'},
+  {q:"If D=0, the second derivative test is:",opts:["Always saddle","Always min","Inconclusive","Always max"],ans:2,exp:"D=0 gives no information — test is inconclusive.",diff:'medium'},
+  {q:"For f(x,y)=x³+y³−3x−3y, classify (1,1):",opts:["Maximum","Minimum","Saddle","Inconclusive"],ans:1,exp:"At (1,1): f_xx=6,f_yy=6,f_xy=0, D=36>0, f_xx>0 → local minimum.",diff:'medium'},
+  {q:"For f(x,y)=x³+y³−3x−3y, classify (−1,−1):",opts:["Maximum","Minimum","Saddle","Inconclusive"],ans:0,exp:"At(−1,−1):f_xx=−6,f_yy=−6,f_xy=0, D=36>0, f_xx<0 → local maximum.",diff:'hard'},
+  {q:"For f(x,y)=x³+y³−3x−3y, classify (1,−1):",opts:["Maximum","Minimum","Saddle","Inconclusive"],ans:2,exp:"At(1,−1):f_xx=6,f_yy=−6,f_xy=0, D=−36<0 → saddle point.",diff:'hard'},
+  {q:"Which condition guarantees a local minimum?",opts:["D>0, f_xx>0","D<0, f_xx>0","D>0, f_xx<0","D=0, f_xx>0"],ans:0,exp:"D>0 and f_xx>0 is the condition for a local minimum.",diff:'hard'},
+];
+
+let qIdx=0,score=0,answered=false,currentDiff='all',timerInterval=null,timeLeft=20;
+let userAnswers=[];
+
+function getDiffQuestions(){
+  if(currentDiff==='all') return ALL_QUESTIONS;
+  return ALL_QUESTIONS.filter(q=>q.diff===currentDiff);
+}
+
+function startTimer(){
+  clearInterval(timerInterval);
+  timeLeft=20;
+  updateTimerDisplay();
+  timerInterval=setInterval(()=>{
+    timeLeft--;
+    updateTimerDisplay();
+    if(timeLeft<=0){clearInterval(timerInterval);autoSkip();}
+  },1000);
+}
+
+function updateTimerDisplay(){
+  const el=document.getElementById('quiz-timer');
+  if(!el) return;
+  el.textContent=timeLeft+'s';
+  el.classList.toggle('urgent',timeLeft<=5);
+}
+
+function autoSkip(){
+  if(answered) return;
+  answered=true;
+  clearInterval(timerInterval);
+  const qs=getDiffQuestions();
+  const q=qs[qIdx];
+  const opts=document.querySelectorAll('.quiz-opt');
+  opts.forEach(o=>o.classList.add('locked'));
+  if(opts[q.ans]) opts[q.ans].classList.add('correct');
+  userAnswers.push({q:q.q,chosen:null,correct:q.ans,opts:q.opts,ok:false,exp:q.exp});
+  const fb=document.getElementById('quiz-fb');
+  if(fb) fb.textContent="⏱️ Time's up! "+q.exp;
+  const nb=document.getElementById('next-btn');
+  if(nb) nb.disabled=false;
+}
+
+function renderQuiz(){
+  const body=document.getElementById('quiz-body');
+  const qs=getDiffQuestions();
+  if(qIdx>=qs.length){
+    clearInterval(timerInterval);
+    const pct=Math.round(score/qs.length*100);
+    const msg=pct>=80?"🎉 Excellent! Strong grasp of maxima/minima concepts.":
+               pct>=50?"👍 Good effort! Review the second derivative test and classification.":
+               "📖 Keep practicing! Revisit the Theory section and examples.";
+    // Review
+    let reviewHtml='<div class="quiz-review">';
+    userAnswers.forEach(ua=>{
+      reviewHtml+=`<div class="review-item ${ua.ok?'r-correct':'r-wrong'}">
+        <div class="r-q">${ua.ok?'✅':'❌'} ${ua.q}</div>
+        <div class="r-a">Your answer: <em>${ua.chosen!==null?ua.opts[ua.chosen]:'(skipped)'}</em>${!ua.ok?` · Correct: <em>${ua.opts[ua.correct]}</em>`:''}</div>
+        <div class="r-a" style="font-size:.8rem;margin-top:.2rem;opacity:.8">${ua.exp}</div>
+      </div>`;
+    });
+    reviewHtml+='</div>';
+    body.innerHTML=`<div class="quiz-score-wrap">
+      <div class="quiz-score-big">${score}/${qs.length}</div>
+      <div class="quiz-score-label">${pct}% Score</div>
+      <div class="quiz-score-msg">${msg}</div>
+      ${reviewHtml}
+      <button class="btn-restart" onclick="restartQuiz()">Retake</button>
+      <button class="btn-restart" style="background:var(--teal)" onclick="currentDiff='all';restartQuiz()">Try All Questions</button>
+    </div>`;
+    document.getElementById('q-bar').style.width='100%';
+    return;
+  }
+  const q=qs[qIdx];
+  document.getElementById('q-bar').style.width=((qIdx/qs.length)*100)+'%';
+  answered=false;
+  body.innerHTML=`
+    <div class="quiz-top">
+      <div class="quiz-q-num">Question ${qIdx+1} of ${qs.length}</div>
+      <div id="quiz-timer" class="quiz-timer">${timeLeft}s</div>
+    </div>
+    <div class="quiz-diff-row">
+      ${['all','easy','medium','hard'].map(d=>`<button class="diff-btn ${currentDiff===d?'active-'+d:''}" onclick="changeDiff('${d}')">${d.charAt(0).toUpperCase()+d.slice(1)}</button>`).join('')}
+    </div>
+    <div class="quiz-question">${q.q}</div>
+    <div class="quiz-options" id="quiz-opts">
+      ${q.opts.map((o,i)=>`<div class="quiz-opt" onclick="selectOpt(${i})">${String.fromCharCode(65+i)}. ${o}</div>`).join('')}
+    </div>
+    <div class="quiz-feedback" id="quiz-fb"></div>
+    <div class="quiz-nav">
+      <span style="font-size:.8rem;color:var(--ink-faint)">Score: ${score}</span>
+      <button class="btn-quiz" id="next-btn" onclick="nextQ()" disabled>Next →</button>
+    </div>`;
+  startTimer();
+}
+
+function changeDiff(d){
+  currentDiff=d;qIdx=0;score=0;answered=false;userAnswers=[];
+  clearInterval(timerInterval);renderQuiz();
+}
+
+function selectOpt(idx){
+  if(answered) return;
+  answered=true;
+  clearInterval(timerInterval);
+  const qs=getDiffQuestions();
+  const q=qs[qIdx];
+  const opts=document.querySelectorAll('.quiz-opt');
+  opts.forEach(o=>o.classList.add('locked'));
+  opts[idx].classList.add(idx===q.ans?'correct':'wrong');
+  if(idx!==q.ans) opts[q.ans].classList.add('correct');
+  const ok=idx===q.ans;
+  if(ok) score++;
+  userAnswers.push({q:q.q,chosen:idx,correct:q.ans,opts:q.opts,ok,exp:q.exp});
+  document.getElementById('quiz-fb').textContent=q.exp;
+  document.getElementById('next-btn').disabled=false;
+}
+
+function nextQ(){qIdx++;renderQuiz();}
+function restartQuiz(){qIdx=0;score=0;answered=false;userAnswers=[];clearInterval(timerInterval);renderQuiz();}
+
+renderQuiz();
+</script>
+</body>
+</html>
